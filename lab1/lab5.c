@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 void count_digits(int* array,int* arr, size_t n);
+
 void count_sums(int* array, int* arr, size_t n);
 
 int counter(int n);
@@ -10,13 +11,30 @@ void bubble_sort(int* a, int n);
 
 int digit_sum(int n);
 
+int getInt(int *a)
+{
+    int n;
+    do{
+        n = scanf("%d", a);
+        if (n < 0)
+            return 0;
+        if (n == 0){
+            printf("%s\n", "Error! Repeat input");
+            scanf("%*c", 0);
+        }
+    } while (n == 0);
+    return 1;
+}
+
 int main() {
     int n;
-    scanf("%d", &n); // Ввёл длину последовательности
+    getInt(&n); // Ввёл длину последовательности
+//    scanf("%d", &n); // Ввёл длину последовательности
     int nums[n]; // Объявил массив
 
     for (int i = 0; i < n; i++) {
-       scanf("%d",  &nums[i]); // Считал последовательность из потока ввода
+//       scanf("%d",  &nums[i]); // Считал последовательность из потока ввода
+       getInt(&nums[i]); // Считал последовательность из потока ввода
     }
 
 
