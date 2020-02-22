@@ -2,27 +2,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <malloc.h>
-#include <stdbool.h>
 
 char *getstr();
 
 // Пропуск символов до первого пробела, табуляции или 0-байта
 char *skipWord(char *s)
 {
-    int k = (int)strcspn(s, " \t"); // 1-ый совпадающий символ
+    int k = (int)strcspn(s, " "); // 1-ый совпадающий символ
     return s + k;
 }
 
 // Пропуск пробелов и табуляций
 char *skipSpace(char *s)
 {
-    int k = (int)strspn(s, " \t"); // 1-ый несовпадающий символ
+    int k = (int)strspn(s, " "); // 1-ый несовпадающий символ
     return s + k;
 }
 
 char *copyWord(char *from, char *to)
 {
-    int k = (int)strcspn(from, " \t"); // длина слова
+    int k = (int)strcspn(from, " "); // длина слова
     strncat(to, from, k);
     to += k;
     *to++ = ' ';
@@ -31,21 +30,24 @@ char *copyWord(char *from, char *to)
 }
 
 
-char *reorg(char *s)
-{
+char *reorgStr(char *s, char *out1, char *out2){
 // Выделяем память под выходные данные
+
+
+
+
     char *p = (char *)malloc(strlen(s) + 1);
     char *tmp = p;
-    int fl = 0; // для выбора каждого второго слова
+    char literal=*s;
     *tmp = '\0'; // нуль ограниченная рез. строка
 
     // пропуск пробелов
     while (*(s = skipSpace(s))){
-        if (fl) // нужное слово
+        if ((*s)==literal) // нужное слово
             tmp = copyWord(s, tmp);
-        fl = !fl;
-        s = skipWord(s); // пропускаем слово в исходной строке
+        s=skipWord(s);
     }
+
     // удаление хвостого пробела
     if (p != tmp)
         *--tmp = '\0';
@@ -57,16 +59,23 @@ char *reorg(char *s)
 
 
 int main(){
-    char *str=(char*)malloc(sizeof(char));
-    char *p=(char*)malloc(sizeof(char));
+    char *str;
+    char *out1=(char *)malloc(sizeof(char));
+    char *out2=(char *)malloc(sizeof(char));
 
-    while (str=getstr(str)) {
+    str = getstr();
+    while (str) {
         printf("Source string: \"%s\"\n", str);
-        p = reorg(str);
-        printf("Result string: \"%s\"\n", p);
+        reorgStr(str, out1, out2);
+        printf("String of nums: \"%s\"\n", out1);
+        printf("String of words: \"%s\"\n", out2);
+
         free(str);
-        free(p);
+        free(out1);
+        free(out2);
+        str = getstr(str);
     }
+
     puts("That's all. Bye!");
 
     return 0;

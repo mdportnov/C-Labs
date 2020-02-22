@@ -60,10 +60,16 @@ void create_new_matrix(struct matrix *matrix, struct matrix *newMatrix,
 
 void print(matrix *rm) {
     int i, j;
+
+    line* m_ptr=rm->pt;
+    int* ptr;
+
     for (i = 0; i < rm->m; i++) {
-        for (j = 0; j < rm->pt[i].n; j++) {
-            printf("%d ", rm->pt[i].arr[j]);
+        ptr=m_ptr->arr;
+        for (j = 0; j < m_ptr->n; j++) {
+            printf("%d ", *(ptr++));
         }
+        m_ptr++;
         printf("\n");
     }
     printf("\n");
@@ -81,16 +87,17 @@ void erase(matrix *a) {
 int main() {
     int m;
     struct matrix matrix;
-
     input(&m, &matrix); // ввод матрицы
-
     printf("It's your matrix: \n");
     print(&matrix); // вывод матрицы
 
     double *vector = (double *) malloc(m * sizeof(vector));
 
-    for (int k = 0; k < m; k++) { // заполнение вектора средних значений строк матрицы
-        *(vector + k) = average_in_row(matrix.pt[k].arr, matrix.pt[k].n);
+    double *ptr=vector;
+    line *m_ptr=matrix.pt;
+
+    for (int k = 0; k < m; k++,  m_ptr++) { // заполнение вектора средних значений строк матрицы
+        *(ptr++) = average_in_row(m_ptr->arr, m_ptr->n);
     }
 
     printV(vector, m); // вывод вектора средних значений по строкам
@@ -110,17 +117,19 @@ int main() {
 
 
 void printV(double *vec, int size) {
+    double *ptr=vec;
     printf("\nIt's vector of average value in row of your matrix: \n");
     for (int i = 0; i < size; i++) {
-        printf("%.1f ", vec[i]);
+        printf("%.1f ", *(ptr++));
     }
     printf("\n");
 }
 
 void printNV(double *vec, int size) {
+    double *ptr=vec;
     printf("\nIt's vector of numbers quantity in row of your matrix: \n");
     for (int i = 0; i < size; i++) {
-        printf("%d ", (int) vec[i]);
+        printf("%d ", (int) *(ptr++));
     }
     printf("\n");
 }
@@ -130,41 +139,42 @@ void create_new_matrix(matrix *matrix, struct matrix *newMatrix, double *vector)
     (*newMatrix).pt = (line *) calloc(newMatrix->m, sizeof(line));
 
     double *rows_length = (double *) malloc((newMatrix->m) * sizeof(double)); // Массив длин строк новой матрицы
+//    for (int k = 0; k < newMatrix->m; ++k) {
+//        *(rows_length + k) = 0;
+//    }
 
-    for (int k = 0; k < newMatrix->m; ++k) {
-        *(rows_length + k) = 0;
-    }
-
+    int index = 0;
     for (int i = 0; i < matrix->m; i++) {
-
-
+        (*newMatrix).pt[i].n = (int) matrix->pt->n;
+        (*newMatrix).pt[i].arr = (int *) calloc((int) matrix->pt->n, sizeof(int));
+        index = 0;
 
         for (int j = 0; j < matrix->pt[i].n; j++) {
             if ((double) counter(matrix->pt[i].arr[j]) >= *(vector + i)) {
                 (*(rows_length + i))++;
+                newMatrix->pt[i].arr[index] = matrix->pt[i].arr[j];
+                index++;
             }
         }
-
-
-
+        newMatrix->pt[i].arr=(int*)realloc(newMatrix->pt[i].arr, (int)*(rows_length + i));
+        newMatrix->pt[i].n=(int)*(rows_length + i);
     }
 
     printNV(rows_length, newMatrix->m); // Вывод вектора длин строк новых матриц
     printf("\n");
 
-    int index = 0;
-    for (int i = 0; i < (newMatrix->m); i++) { // Перебор строк
-        (*newMatrix).pt[i].n = (int) rows_length[i];
-        (*newMatrix).pt[i].arr = (int *) calloc((int) rows_length[i], sizeof(int));
-        index = 0;
-
-        for (int j = 0; j < matrix->pt[i].n; j++) { // Перебор конкретной строки
-            if ((double) counter(matrix->pt[i].arr[j]) >= *(vector + i)) {
-                newMatrix->pt[i].arr[index] = matrix->pt[i].arr[j];
-                index++;
-            }
-        }
-    }
+//    for (int i = 0; i < (newMatrix->m); i++) { // Перебор строк
+//        (*newMatrix).pt[i].n = (int) rows_length[i];
+//        (*newMatrix).pt[i].arr = (int *) calloc((int) rows_length[i], sizeof(int));
+//        index = 0;
+//
+//        for (int j = 0; j < matrix->pt[i].n; j++) { // Перебор конкретной строки
+//            if ((double) counter(matrix->pt[i].arr[j]) >= *(vector + i)) {
+//                newMatrix->pt[i].arr[index] = matrix->pt[i].arr[j];
+//                index++;
+//            }
+//        }
+//    }
 }
 
 void input(int *m, struct matrix *matrix) {
