@@ -136,17 +136,11 @@ void create_new_matrix(matrix *matrix, struct matrix *newMatrix, double *vector)
     }
 
     for (int i = 0; i < matrix->m; i++) {
-
-
-
         for (int j = 0; j < matrix->pt[i].n; j++) {
             if ((double) counter(matrix->pt[i].arr[j]) >= *(vector + i)) {
                 (*(rows_length + i))++;
             }
         }
-
-
-
     }
 
     printNV(rows_length, newMatrix->m); // Вывод вектора длин строк новых матриц

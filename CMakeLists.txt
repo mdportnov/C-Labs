@@ -12,9 +12,7 @@ add_executable(lab2.14 lab2/lab14.c)
 add_executable(lab2.37 lab2/lab2.37.c)
 add_executable(lab2new lab2/lab2.37new.c)
 
-add_executable(lab3a lab3/lab3a.2.c)
 add_executable(lab3.18a lab3/lab3.18a.c)
-add_executable(lab3b lab3/lab3b.6.c)
 add_executable(lab3.18b lab3/lab3.18b.c)
 
 add_executable(structures test/structures.c)
