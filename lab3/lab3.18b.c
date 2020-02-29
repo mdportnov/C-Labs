@@ -43,9 +43,7 @@ stringItem* changeList(stringItem *char_begin){
                 deleteTo(string, counter);
             }
         }
-
     }
-
     return string;
 }
 
@@ -53,7 +51,7 @@ stringItem* changeList(stringItem *char_begin){
 int main() {
     stringItem *st;
     while (puts("enter string.."), getList(&st)) {
-        st=changeList(st);
+//        st=changeList(st);
         printList(st);
     }
 }

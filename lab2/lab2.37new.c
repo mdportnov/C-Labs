@@ -163,18 +163,6 @@ void create_new_matrix(matrix *matrix, struct matrix *newMatrix, double *vector)
     printNV(rows_length, newMatrix->m); // Вывод вектора длин строк новых матриц
     printf("\n");
 
-//    for (int i = 0; i < (newMatrix->m); i++) { // Перебор строк
-//        (*newMatrix).pt[i].n = (int) rows_length[i];
-//        (*newMatrix).pt[i].arr = (int *) calloc((int) rows_length[i], sizeof(int));
-//        index = 0;
-//
-//        for (int j = 0; j < matrix->pt[i].n; j++) { // Перебор конкретной строки
-//            if ((double) counter(matrix->pt[i].arr[j]) >= *(vector + i)) {
-//                newMatrix->pt[i].arr[index] = matrix->pt[i].arr[j];
-//                index++;
-//            }
-//        }
-//    }
 }
 
 void input(int *m, struct matrix *matrix) {

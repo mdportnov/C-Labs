@@ -3,121 +3,100 @@
 #include <stdlib.h>
 #include <malloc.h>
 
+void form(char *in, char *outDigits, char *outLetters);
+char *skip(char *str);
+char *copyDigits(char **from, char *to, int *nflag);
+char *copyLetters(char **from, char *to, int *cflag);
 char *getstr();
 
-void reorgStr(const char *s, char *out1, char *out2);
-
-char *deleteSpaces(char *str) {
-    char *res = (char *) malloc(sizeof(char) * strlen(str));
-    int j = 0;
-    int i;
-    for (i = 0; i < strlen(str); i++) {
-        if (str[i] == ' ') {
-            if (j == 0) continue;
-            if (str[i + 1] == ' ') continue;
-        }
-        res[j] = str[i];
-        j++;
-    }
-    i = (int) strlen(res);
-    if (res[i - 1] == ' ')
-        res[i - 1] = '\0';
-    return res;
-}
-
-char *deleteTabs(char *str){
-    char *res = (char *) malloc(sizeof(char) * strlen(str));
-
-    int i;
-    for (i = 0; i < strlen(str); i++) {
-       if(str[i]=='\t'){
-           res[i]=' ';
-       } else res[i]=str[i];
-    }
-
-    if (res[strlen(res)-1] == '\t')
-        res[strlen(res)-1] = '\0';
-
-    return res;
-}
-
 int main() {
-    char *str, *out1, *out2;
+    char *buf, *outDigits, *outLetters;
+    buf=getstr();
+    while (buf) {
+        printf("Source string: \"%s\"\n", buf);
 
-    str = getstr();
-    while (str) {
-        printf("Source string: \"%s\"\n", str);
+        outLetters = (char *) malloc((strlen(buf)));
+        outDigits = (char *) malloc((strlen(buf)));
 
-        out1 = (char *) malloc(strlen(str) * sizeof(char));
-        out2 = (char *) malloc(strlen(str) * sizeof(char));
+        form(buf, outDigits, outLetters);
 
-        reorgStr(str, out1, out2);
+        printf("Result string of nums: \"%s\" \n", outDigits);
+        printf("Result string of words: \"%s\" \n", outLetters);
 
-        out1=deleteTabs(out1);
-        out1=deleteSpaces(out1);
+        free(outDigits);
+        free(outLetters);
+        free(buf);
 
-        out2=deleteTabs(out2);
-        out2=deleteSpaces(out2);
-
-
-        printf("String of nums: \"%s\"\n", out1);
-        printf("String of words: \"%s\"\n", out2);
-
-        free(str);
-        free(out1);
-        free(out2);
-        str = getstr(str);
+        buf=getstr();
     }
-    puts("That's all. Bye!");
-
-    return 0;
 }
 
-int is_digit(char a){
-    if(a>=48 && a<=57){
-        return 1;
-    } else return 0;
-}
+void form(char *in, char *outDigits, char *outLetters){
+    int nflag=0, cflag=0;
 
-int is_space(char a){
-    if(a==32 || a=='\t'){
-        return 1;
-    } else return 0;
-}
-
-int is_alpha(char a){
-    if((a>=65 && a<=90) || (a>=97 && a<=122)){
-        return 1;
-    } else return 0;
-}
-
-void reorgStr(const char *str, char *out1, char *out2) {
-    int num_index = 0, char_index = 0;
-    for (int i = 0; i < strlen(str); i++) {
-        if (is_digit(*(str + i))) {
-            *(out1 + (num_index++)) = *(str + i);
-            if (is_space(*(str + i + 1)) || is_alpha(*(str + i + 1))) {
-                *(out1 + num_index++) = ' ';
+    while( *(in = skip(in)) ){
+        if(*in >= '0' && *in <= '9'){
+            if(nflag) {
+                outDigits = copyDigits(&in, outDigits, &nflag);
+                nflag=1;
             }
+            if(!nflag)
+                outDigits = copyDigits(&in, outDigits, &nflag);
 
-        } else if (is_alpha(*(str + i))) {
-            *(out2 + (char_index++)) = *(str + i);
-            if (is_space(*(str + i + 1)) || is_digit(*(str + i + 1))) {
-                *(out2 + char_index++) = ' ';
+        } else {
+            if(cflag) {
+                outLetters = copyLetters(&in, outLetters, &cflag);
+                cflag=1;
             }
+            if(!cflag)
+                outLetters = copyLetters(&in, outLetters, &cflag);
+        }
+    }
+    *outDigits = '\0';
+    *outLetters = '\0';
+}
+
+char *copyDigits(char **from, char *to, int *nflag){
+    if(*nflag==0) {
+        while ((**from >= '0' && **from <= '9')) {
+            *to++ = *(*from)++;
+        }
+        *nflag = 1;
+    }else if(*nflag==1){
+        *to++ = ' ';
+        while ((**from >= '0' && **from <= '9')) {
+            *to++ = *(*from)++;
         }
     }
 
-    if(!char_index) {
-//        out2 = (char *) realloc(out2, 9 * sizeof(char));
-        strcpy(out2, "no chars");
-    }
-    if(!num_index) {
-//        out1 = (char *) realloc(out1, 8 * sizeof(char));
-        strcpy(out1, "no nums");
+    return to;
+}
+
+char *copyLetters(char **from, char *to, int *cflag){
+    if(*cflag==0) {
+        while ((**from >= 'A' && **from <= 'Z') || (**from >= 'a' && **from <= 'z')) {
+            *to++ = *(*from)++;
+        }
+        *cflag=1;
+    } else if(*cflag==1){
+        *to++ = ' ';
+        while ((**from >= 'A' && **from <= 'Z') || (**from >= 'a' && **from <= 'z')) {
+            *to++ = *(*from)++;
+        }
     }
 
+    return to;
 }
+
+
+char *skip(char *str)
+{
+    while(*str && ((*str<'0' || *str>'9') && (*str<'A' || *str>'Z') && (*str<'a' || *str>'z'))){
+        str++;
+    }
+    return str;
+}
+
 
 char *getstr() {
     char *ptr = (char *) malloc(1);
